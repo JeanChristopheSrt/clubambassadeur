@@ -521,7 +521,98 @@
         margin-top: 8px;
       }
     }
-  </style>
+  
+/* Club Ambassadeur — inline contact form */
+.ambassador-form-wrap{
+  display:grid;
+  grid-template-rows:0fr;
+  opacity:0;
+  margin-top:0;
+  transition:grid-template-rows .6s cubic-bezier(.2,.8,.2,1),opacity .4s ease,margin .6s ease;
+}
+.ambassador-form-wrap.open{
+  grid-template-rows:1fr;
+  opacity:1;
+  margin-top:clamp(2.5rem,5vw,5rem);
+}
+.ambassador-form-inner{overflow:hidden}
+.ambassador-form{
+  background:var(--green,#173f32);
+  color:var(--cream,#f5f0e7);
+  padding:clamp(2rem,5vw,4.5rem);
+}
+.ambassador-form h3{
+  font-size:clamp(2rem,4vw,4rem);
+  line-height:.95;
+  margin:0 0 1rem;
+  letter-spacing:-.04em;
+}
+.ambassador-form .form-intro{
+  max-width:42rem;
+  font-size:1.05rem;
+  line-height:1.6;
+  margin:0 0 2.5rem;
+  opacity:.82;
+}
+.ambassador-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.2rem;
+}
+.ambassador-field{
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+}
+.ambassador-field label{
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:700;
+  opacity:.72;
+}
+.ambassador-field input{
+  width:100%;
+  box-sizing:border-box;
+  border:0;
+  border-bottom:1px solid rgba(255,255,255,.35);
+  background:transparent;
+  color:inherit;
+  padding:.75rem 0;
+  font:inherit;
+  font-size:1rem;
+  outline:none;
+  border-radius:0;
+}
+.ambassador-field input:focus{border-bottom-color:rgba(255,255,255,.9)}
+.ambassador-submit{
+  margin-top:2rem;
+  display:inline-flex;
+  align-items:center;
+  gap:.7rem;
+  border:0;
+  background:var(--cream,#f5f0e7);
+  color:var(--green,#173f32);
+  padding:1rem 1.25rem;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+.ambassador-privacy{
+  font-size:.72rem;
+  line-height:1.5;
+  opacity:.58;
+  margin:1.25rem 0 0;
+  max-width:38rem;
+}
+.ambassador-success{display:none}
+.ambassador-success.show{display:block}
+.ambassador-form-content.hide{display:none}
+@media(max-width:700px){
+  .ambassador-form-grid{grid-template-columns:1fr}
+}
+
+</style>
 </head>
 
 <body>
@@ -594,7 +685,7 @@
               <h3>Vous nous<br>mettez en relation.</h3>
             </div>
             <p>
-              Faites simplement les présentations. Je prends ensuite le relais.
+              Faites simplement les présentations ou parlez-moi du projet.
             </p>
           </article>
 
@@ -663,14 +754,70 @@
         </div>
 
         <!-- À remplacer plus tard par ton formulaire / email / Calendly -->
-        <a class="cta reveal" href="mailto:CONTACT@EXEMPLE.FR?subject=Club%20Ambassadeur">
+        <a class="cta reveal" href="#ambassadeur-form">
           Je deviens ambassadeur <span>→</span>
         </a>
 
       </div>
     </section>
 
-  </main>
+  
+<section class="section" id="ambassadeur-form" aria-label="Devenir ambassadeur">
+  <div class="container">
+    <div class="ambassador-form-wrap" id="ambassadorFormWrap">
+      <div class="ambassador-form-inner">
+        <div class="ambassador-form">
+          <div class="ambassador-form-content" id="ambassadorFormContent">
+            <h3>DEVENEZ AMBASSADEUR</h3>
+            <p class="form-intro">
+              Vous souhaitez devenir ambassadeur GreenHome ?<br>
+              Laissez-moi vos coordonnées et je vous recontacte pour en discuter.
+            </p>
+
+            <form id="ambassadorForm" action="https://formspree.io/f/xyezwodw" method="POST">
+              <div class="ambassador-form-grid">
+                <div class="ambassador-field">
+                  <label for="prenom">Prénom</label>
+                  <input id="prenom" name="Prénom" type="text" autocomplete="given-name" required>
+                </div>
+                <div class="ambassador-field">
+                  <label for="nom">Nom</label>
+                  <input id="nom" name="Nom" type="text" autocomplete="family-name" required>
+                </div>
+                <div class="ambassador-field">
+                  <label for="telephone">Téléphone</label>
+                  <input id="telephone" name="Téléphone" type="tel" autocomplete="tel" required>
+                </div>
+                <div class="ambassador-field">
+                  <label for="email">E-mail</label>
+                  <input id="email" name="E-mail" type="email" autocomplete="email" required>
+                </div>
+              </div>
+
+              <input type="hidden" name="_subject" value="Nouvelle demande — Club Ambassadeur">
+              <button class="ambassador-submit" type="submit">
+                Être recontacté <span>→</span>
+              </button>
+              <p class="ambassador-privacy">
+                Vos informations restent confidentielles et sont utilisées uniquement pour vous recontacter au sujet du Club Ambassadeur.
+              </p>
+            </form>
+          </div>
+
+          <div class="ambassador-success" id="ambassadorSuccess">
+            <h3>C’est noté.</h3>
+            <p class="form-intro">
+              Merci pour votre demande.<br>
+              Je vous recontacte prochainement pour en discuter.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
 
   <footer>
     <div class="container footer-inner">
@@ -698,6 +845,51 @@
       observer.observe(el);
     });
   </script>
+
+
+<script>
+(function(){
+  const wrap = document.getElementById('ambassadorFormWrap');
+  const form = document.getElementById('ambassadorForm');
+  const content = document.getElementById('ambassadorFormContent');
+  const success = document.getElementById('ambassadorSuccess');
+
+  document.querySelectorAll('a[href="#ambassadeur-form"]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      wrap.classList.add('open');
+      setTimeout(function(){
+        document.getElementById('prenom').focus();
+      }, 500);
+      wrap.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    submit.style.opacity = '.6';
+
+    try {
+      const response = await fetch(form.action, {
+        method:'POST',
+        body:new FormData(form),
+        headers:{'Accept':'application/json'}
+      });
+
+      if(!response.ok) throw new Error('Submission failed');
+
+      content.classList.add('hide');
+      success.classList.add('show');
+    } catch(err) {
+      submit.disabled = false;
+      submit.style.opacity = '1';
+      alert('Une erreur est survenue. Merci de réessayer.');
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
